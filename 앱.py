@@ -1,25 +1,23 @@
-import sys
-input = sys.stdin.readline
-
 N, M = map(int, input().split())
-memories = [0] + list(map(int, input().split()))
-costs = [0] + list(map(int, input().split()))
+app = []
+for m, c in zip(input().split(), input().split()):
+    app.append((int(c), int(m)))
+app.sort()
+dp1, dp2 = {0: 0}, {0: 0}
+res = 10**6
 
-costSum = sum(costs)
-dp = [[0]*(costSum+1) for _ in range(N+1)]
-minCost = costSum
-
-for i in range(1, N+1):
-    curMemory = memories[i]
-    curCost = costs[i]
-
-    for j in range(1, costSum+1):
-        if curCost > j:
-            dp[i][j] = dp[i-1][j]
+for c, m in app:
+    for key in dp1:
+        new = key + c
+        if new > res:
+            continue
+        if new in dp2:
+            dp2[new] = max(dp1[key]+m, dp2[new])
         else:
-            dp[i][j] = max(dp[i-1][j], dp[i-1][j-curCost] + curMemory)
+            dp2[new] = dp1[key] + m
+        if dp2[new] >= M:
+            res = min(res, new)
+    print(dp2)
+    dp1 = dp2.copy()
 
-        if dp[i][j] >= M:
-            minCost = min(minCost, j)
-
-print(minCost)
+print(res)
