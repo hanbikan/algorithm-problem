@@ -1,35 +1,40 @@
+import sys
+import heapq
+input = sys.stdin.readline
 
-DESTINATION, WEIGHT = 0, 1
+
+def bfs(start):
+    global minWeights
+    minWeights[start] = 0
+
+    heap = []
+    heapq.heappush(heap, (0, start))
+
+    while heap:
+        curWeight, curNode = heapq.heappop(heap)
+
+        for adjacentNode, adjacentWeight in graph[curNode].items():
+            nextAdjacentWeight = curWeight + adjacentWeight
+
+            # 처음 방문이거나, 이미 방문하였으나 더 짧은 경로일 때
+            if minWeights[adjacentNode] == -1 or minWeights[adjacentNode] > nextAdjacentWeight:
+                minWeights[adjacentNode] = nextAdjacentWeight
+                heapq.heappush(heap, (nextAdjacentWeight, adjacentNode))
+
+
+# Input
 V, E = map(int, input().split())
+graph = {i: {} for i in range(1, V+1)}
+
 K = int(input())
-graph = {i:{} for i in range(V+1)}
-
-for i in range(E):
+for _ in range(E):
     u, v, w = map(int, input().split())
-    if graph[u].get(v):
-        graph[u][v] = min(graph[u][v], w)
-    else:
-        graph[u][v] = w
+    # u에서 v로 갈 때의 비용을 최소값으로 유지시킴
+    graph[u][v] = min(graph[u][v], w) if graph[u].get(v) else w
 
-print(graph)
-RET = [None]*(V+1)
-
-todo = [[K, 0]] #[[2, 2], [3, 3]] -> [[3, 6], [4, 7], ..., ]
-isVisited = [False]*(V+1)
-while todo:
-    nextTodo = []
-    for cur in todo:
-        curDestination, curAccumulatedWeight = cur[DESTINATION], cur[WEIGHT]
-
-        if RET[curDestination]!=None: RET[curDestination] = min(RET[curDestination], curAccumulatedWeight)
-        else: RET[curDestination] = curAccumulatedWeight
-
-        for key in graph[curDestination]:
-            if not isVisited[key]:
-                nextTodo.append([key, curAccumulatedWeight+graph[curDestination][key]])
-                isVisited[key] = True
-    todo = nextTodo
+# Solution
+minWeights = [-1 for i in range(V+1)]
+bfs(K)
 
 for i in range(1, V+1):
-    if RET[i]!=None: print(RET[i])
-    else: print('INF')
+    print(minWeights[i] if minWeights[i] != -1 else "INF")
