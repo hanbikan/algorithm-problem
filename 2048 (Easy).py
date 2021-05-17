@@ -36,30 +36,30 @@ def setBoard(direction):
         elif direction == LEFT:
             startX, startY = index, 0
 
-        # push numbers in stack
+        # push numbers in queue
         curX, curY = startX, startY
-        stack = []
+        queue = []
         while 0 <= curX <= N-1 and 0 <= curY <= N-1:
             curNumber = board[curX][curY]
             if curNumber != 0:
-                stack.append(curNumber)
+                queue.append(curNumber)
 
             curX += dx[reversedDirection]
             curY += dy[reversedDirection]
 
         # merge
         i = 0
-        while i < len(stack)-1:
-            if stack[i] == stack[i+1]:
-                stack[i] *= 2
-                del stack[i+1]
+        while i < len(queue)-1:
+            if queue[i] == queue[i+1]:
+                queue[i] *= 2
+                del queue[i+1]
             i += 1
 
         # align
         curX, curY = startX, startY
         while 0 <= curX <= N-1 and 0 <= curY <= N-1:
-            if len(stack) >= 1:
-                board[curX][curY] = stack.pop(0)
+            if len(queue) >= 1:
+                board[curX][curY] = queue.pop(0)
             else:
                 board[curX][curY] = 0
 
