@@ -13,7 +13,6 @@ def dfs(building, depth):
     else:
         buildingsOnDepth[depth] = set([building])
 
-    # 탈출
     if building == targetBuilding:
         return
 
@@ -24,7 +23,6 @@ def dfs(building, depth):
 def searchBuilding(building):
     global costsToBuild
 
-    # 탈출
     if building == targetBuilding:
         return
 
