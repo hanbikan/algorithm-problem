@@ -7,7 +7,7 @@ def isAvailableStr(str):
 
     while len(todo) >= 3:
         for i in range(2, len(todo), 2):
-            if not ((todo[i-2] == '0' and todo[i] == '1') or (todo[i-2] == '1' and todo[i] == '0')):
+            if todo[i-2] == todo[i]:
                 return False
 
         nextTodo = []
