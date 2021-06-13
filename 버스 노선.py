@@ -6,9 +6,9 @@ def getIsRemainer(info):
     info.sort(reverse=True, key=lambda x: x[1])
     info.sort(key=lambda x: x[0])
 
-    isRemainer = [True for i in range(M)]
+    isRemainer = [True for _ in range(M)]
     maxB = 0
-    for a, b, c in info:
+    for _, b, c in info:
         if maxB < b:
             maxB = b
         else:
