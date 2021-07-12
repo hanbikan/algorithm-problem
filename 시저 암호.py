@@ -2,16 +2,16 @@ import sys
 input = sys.stdin.readline
 
 
-def getPi(target):
-    targetLength = len(target)
-    pi = [0]*targetLength
+def getPi(keyword):
+    keywordLength = len(keyword)
+    pi = [0]*keywordLength
     j = 0
 
-    for i in range(1, targetLength):
-        while j > 0 and target[i] != target[j]:
+    for i in range(1, keywordLength):
+        while j > 0 and keyword[i] != keyword[j]:
             j = pi[j-1]
 
-        if target[i] == target[j]:
+        if keyword[i] == keyword[j]:
             j += 1
             pi[i] = j
 
@@ -34,13 +34,13 @@ def printShifts():
     curS = S
 
     # shifts 추가
-    if isStringCount1(curS, W):
+    if isThereOneKeyword(curS, W):
         shifts.append(0)
 
     for i in range(1, aLength):
         curS = shiftLeft(curS)
 
-        if isStringCount1(curS, W):
+        if isThereOneKeyword(curS, W):
             shifts.append(i)
 
     # 출력
@@ -57,15 +57,15 @@ def printShifts():
         print()
 
 
-def isStringCount1(string, target):
-    stringCount = 0
+def isThereOneKeyword(string, keyword):
+    keywordCount = 0
     stringLength = len(string)
-    targetLength = len(target)
+    keywordLength = len(keyword)
 
     i, j = 0, 0
 
     while i < stringLength:
-        if string[i] == target[j]:
+        if string[i] == keyword[j]:
             i += 1
             j += 1
         else:
@@ -74,14 +74,14 @@ def isStringCount1(string, target):
             else:
                 j = pi[j-1]
 
-        if j == targetLength:
-            stringCount += 1
-            if stringCount >= 2:
+        if j == keywordLength:
+            keywordCount += 1
+            if keywordCount >= 2:
                 return False
 
             j = pi[j-1]
 
-    return stringCount == 1
+    return keywordCount == 1
 
 
 def shiftLeft(s):
