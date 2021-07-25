@@ -12,6 +12,7 @@ def getMinTimeAndCaseCount(N, K):
     minTimes[N] = 0
 
     while todo:
+        print(todo)
         nextTodo = []
         caseCount = 0
         curTime += 1
