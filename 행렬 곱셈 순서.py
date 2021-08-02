@@ -20,7 +20,6 @@ if __name__ == '__main__':
 
             dp[i][j] = float('inf')
             for k in range(i, j):
-                print(i, k, j)
                 dp[i][j] = min(dp[i][j], dp[i][k] + dp[k+1]
                                [j] + nums[i]*nums[k+1]*nums[j+1])
 

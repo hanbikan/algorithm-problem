@@ -1,22 +1,18 @@
-N = int(input())
-nums = list(map(int, input().split()))
-dp = [0]
+import sys
+import bisect
+input = sys.stdin.readline
 
-for i in range(N):
-    left = 0
-    right = len(dp)-1
+if __name__ == '__main__':
+    N = int(input())
+    nums = list(map(int, input().split()))
 
-    while left<=right:
-        mid=(right+left)//2
-        if dp[mid]<nums[i]:
-            left = mid + 1
+    stack = []
+    for n in nums:
+        minBiggerIndex = bisect.bisect_left(stack, n)
+
+        if minBiggerIndex == len(stack):
+            stack.append(n)
         else:
-            right = mid - 1
-    
-    if left >= len(dp):
-        dp.append(nums[i])
-        print(1)
-    else:
-        dp[left] = nums[i]
-        print(2)
-print(dp)
+            stack[minBiggerIndex] = n
+
+    print(len(stack))
