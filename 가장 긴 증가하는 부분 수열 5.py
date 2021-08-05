@@ -1,84 +1,39 @@
 import sys
+import bisect
 input = sys.stdin.readline
 sys.setrecursionlimit(1000000)
-
-
-def bs(n):
-    left, right = 0, len(stack)-1
-
-    while left <= right:
-        mid = (left+right)//2
-
-        if nums[stack[mid]] < n:
-            left = mid + 1
-        else:
-            right = mid - 1
-
-    return left
-
-
-def dfs():
-    global currentNode, currentLength
-
-    if currentLength == stackLength:
-        return True
-
-    nexts = tree.get(currentNode)
-    if nexts:
-        for next in nexts:
-            currentNode = next
-            currentLength += 1
-            if dfs():
-                stack.append(nums[next])
-                return True
-            currentLength -= 1
-
-    return False
-
 
 if __name__ == '__main__':
     N = int(input())
     nums = list(map(int, input().split()))
 
     stack = []
-    tree = {}
+    stackLength = 0
 
+    # stack에서의 인덱스를 저장
+    dp = [0]*N
+
+    # 기본 LIS
     for i in range(N):
-        # 기본 LIS
         n = nums[i]
-        minBiggerIndex = bs(n)
+        minBiggerIndex = bisect.bisect_left(stack, n)
 
-        if minBiggerIndex == len(stack):
-            stack.append(i)
+        if minBiggerIndex == stackLength:
+            stack.append(n)
+            stackLength += 1
         else:
-            if nums[stack[minBiggerIndex]] == n:
-                continue
+            stack[minBiggerIndex] = n
 
-            stack[minBiggerIndex] = i
+        dp[i] = minBiggerIndex
 
-        # 트리
-        if minBiggerIndex == 0:
-            if tree.get('R'):
-                tree['R'].add(i)
-            else:
-                tree['R'] = set([i])
-
-            continue
-
-        prevIndex = stack[minBiggerIndex-1]
-        if nums[prevIndex] < n:
-            if tree.get(prevIndex):
-                tree[prevIndex].add(i)
-            else:
-                tree[prevIndex] = set([i])
-
-            continue
-
-    stackLength = len(stack)
     print(stackLength)
 
-    currentNode = 'R'
-    currentLength = 0
-    stack = []
-    dfs()
-    print(*reversed(stack))
+    # DP의 특정 값에서 가장 마지막에 있는 원소가 정답이다.
+    # 가장 마지막으로 Replace했다는 것을 의미하기 때문이다.
+    # 이것을 (stack의 마지막 인덱스 ~ 0)까지 진행하면 된다.
+    toPrint = []
+    for i in range(N-1, -1, -1):
+        if dp[i] == stackLength - 1:
+            toPrint.append(nums[i])
+            stackLength -= 1
+    print(*reversed(toPrint))
