@@ -1,30 +1,36 @@
-def solution(roadmap):
-    DP = [[0 for i in range(len(roadmap[0]))] for j in range(len(roadmap))]
-    DP[0][0]=1
-def getPossiblePosition(roadmap, curX, curY):
-    RET = []
-    curH = roadmap[curX][curY]
-    if curX-1>=0 and roadmap[curX-1][curY]<curH: RET.append([curX-1, curY])
-    if curY-1>=0 and roadmap[curX][curY-1]<curH: RET.append([curX, curY-1])
-    if curX+1<=len(roadmap)-1 and roadmap[curX+1][curY]<curH: RET.append([curX+1, curY])
-    if curY+1<=len(roadmap[0])-1 and roadmap[curX][curY+1]<curH: RET.append([curX, curY+1])
-    return RET
+import sys
 
-def printDP(DP):
-    for i in range(len(DP)):
-        print(DP[i])
-    print()
-"""
-tmp = input()
-tmp=tmp.split()
-N, M = int(tmp[0]), int(tmp[1])
-roadmap=[]
-for i in range(N):
-    tmp = input()
-    tmp=tmp.split()
-    for j in range(M):
-        tmp[j]=int(tmp[j])
-    roadmap.append(tmp)
-"""
-roadmap=[[50,45,37,32,30],[35,50,40,20,25],[30,30,25,17,28],[27,24,22,15,10]]
-solution(roadmap)
+sys.setrecursionlimit(200000)
+input = sys.stdin.readline
+dx = [1, -1, 0, 0]
+dy = [0, 0, 1, -1]
+
+
+def dfs(x, y):
+    # 이미 방문한 적이 있을 경우
+    if dp[x][y] != -1:
+        return dp[x][y]
+
+    # Base case
+    if x == M-1 and y == N-1:
+        return 1
+
+    # Recursive case
+    dp[x][y] = 0
+
+    for i in range(4):
+        nextX, nextY = x + dx[i], y + dy[i]
+
+        if 0 <= nextX <= M-1 and 0 <= nextY <= N-1:
+            if nums[x][y] > nums[nextX][nextY]:
+                dp[x][y] += dfs(nextX, nextY)
+
+    return dp[x][y]
+
+
+if __name__ == '__main__':
+    M, N = map(int, input().split())
+    nums = [list(map(int, input().split())) for _ in range(M)]
+
+    dp = [[-1]*N for _ in range(M)]
+    print(dfs(0, 0))
