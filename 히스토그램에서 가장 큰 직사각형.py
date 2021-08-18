@@ -2,41 +2,47 @@ import sys
 input = sys.stdin.readline
 
 
-def getRetangularArea(index):
-    global todo
-    left = right = index
+def initializeMins(index, start, end):
+    if start == end:
+        mins[index] = input_nums[start]
+        return mins[index]
 
-    while 0 <= left:
-        if curNums[left] < curNums[index]:
+    mid = (start+end)//2
+    left_min = initializeMins(index*2, start, mid)
+    right_min = initializeMins(index*2+1, mid+1, end)
+
+    mins[index] = min(left_min, right_min)
+
+    return mins[index]
+
+
+def queryMins(index, range, start, end):
+    if end < range[0] or range[1] < start:
+        return float('inf')
+
+    if range[0] <= start and end <= range[1]:
+        return mins[index]
+
+    mid = (start+end)//2
+    left_min = queryMins(index*2, range, start, mid)
+    right_min = queryMins(index*2+1, range, mid+1, end)
+
+    return min(left_min, right_min)
+
+
+if __name__ == '__main__':
+    while True:
+        input_nums = list(map(int, input().split()))
+        if input_nums == [0]:
             break
-        elif curNums[left] == curNums[index]:
-            todo[left] = False
-        left -= 1
-    left += 1
+        input_len = len(input_nums)
 
-    while right <= curLen-1:
-        if curNums[right] < curNums[index]:
-            break
-        elif curNums[right] == curNums[index]:
-            todo[right] = False
-        right += 1
-    right -= 1
+        mins = [0]*(4*input_len)
+        initializeMins(1, 0, input_len-1)
 
-    return ((right - left) + 1)*curNums[index]
-
-
-while True:
-    curNums = list(map(int, input().split()))
-    if curNums == [0]:
-        break
-
-    curLen = curNums.pop(0)
-
-    todo = [True for _ in range(curLen)]
-    maxRetangularArea = 0
-
-    for i in range(curLen):
-        if todo[i]:
-            maxRetangularArea = max(maxRetangularArea, getRetangularArea(i))
-
-    print(maxRetangularArea)
+        max_sum = 0
+        for i in range(input_len):
+            for j in range(i, input_len):
+                max_sum = max(max_sum, queryMins(
+                    1, (i, j), 0, input_len-1)*(j-i+1))
+        print(max_sum)
