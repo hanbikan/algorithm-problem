@@ -1,29 +1,20 @@
 import sys
-read = sys.stdin.readline
-tmp=list(map(int, read().strip().split()))
-n,m=tmp[0],tmp[1]
-nums=[[-1 for i in range(m)] for j in range(n)]
-for i in range(n):
-    tmp=input()
-    for j in range(m):
-        nums[i][j]=int(tmp[j])
+input = sys.stdin.readline
 
-def getSquareLength(x, y):
-    RET=0
-    minLen = DP[x][y]
-    for i in range(1, DP[x][y]):
-        minLen = min(minLen, DP[x-i][y])
-        RET+=1
-        if i>=minLen: break
-    return RET
+if __name__ == '__main__':
+    n, m = map(int, input().split())
+    nums = [[0]*(m+1)] + [[0] + [int(c) for c in str(input().rstrip())]
+                          for _ in range(n)]
 
-maxLen = 0
-DP=[[0 for i in range(m)] for j in range(n)]
-for i in range(n):
-    for j in range(m):
-        if nums[i][j]==1:
-            if j>=1: DP[i][j]=DP[i][j-1]+1
-            elif j==0: DP[i][j]=1
-        maxLen = max(maxLen, getSquareLength(i,j))
+    dp = [[0]*(m+1) for _ in range(n+1)]
+    max_length = 0
 
-print(maxLen*maxLen)
+    for i in range(1, n+1):
+        for j in range(1, m+1):
+            if nums[i][j] == 1:
+                dp[i][j] = min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]) + 1
+                max_length = max(max_length, dp[i][j])
+            else:
+                dp[i][j] = 0
+
+    print(max_length**2)
