@@ -3,9 +3,8 @@ input = sys.stdin.readline
 
 
 class Node():
-    def __init__(self, key, is_ended=False):
+    def __init__(self, key):
         self.key = key
-        self.is_ended = is_ended
         self.children = {}
 
 
@@ -22,9 +21,6 @@ class Trie:
                 current_node.children[string] = Node(string)
 
             current_node = current_node.children[string]
-
-        # 플래그 수정
-        current_node.is_ended = True
 
     def dfs(self, current_node, depth):
         for k, v in sorted(current_node.children.items()):
