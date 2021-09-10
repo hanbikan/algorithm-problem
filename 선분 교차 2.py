@@ -10,8 +10,7 @@ def solution():
 
     # 평행
     if ccw123*ccw124 == 0 and ccw341*ccw342 == 0:
-        if (mx1 <= x3 <= mx2 or mx1 <= x4 <= mx2) and (my1 <= y3 <= my2 or my1 <= y4 <= my2) or \
-                (mx3 <= x1 <= mx4 or mx3 <= x2 <= mx4) and (my3 <= y1 <= my4 or my3 <= y2 <= my4):
+        if mx1 <= mx4 and mx3 <= mx2 and my1 <= my4 and my3 <= my2:
             return 1
     # 교차
     else:
