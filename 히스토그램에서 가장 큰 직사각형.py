@@ -1,48 +1,82 @@
 import sys
+import math
 input = sys.stdin.readline
+sys.setrecursionlimit(1000000)
 
 
-def initializeMins(index, start, end):
+def get_tree_length(N):
+    if N & (N-1) == 0:
+        return 2*N
+    else:
+        return pow(2, math.ceil(math.log(N, 2)) + 1)
+
+
+def initialize_segtree(index, start, end):
     if start == end:
-        mins[index] = input_nums[start]
-        return mins[index]
+        tree[index] = start
+        return
+
+    mid = (start + end)//2
+    initialize_segtree(index*2, start, mid)
+    initialize_segtree(index*2+1, mid+1, end)
+
+    # Returns lower one
+    if nums[tree[index*2]] < nums[tree[index*2+1]]:
+        tree[index] = tree[index*2]
+    else:
+        tree[index] = tree[index*2+1]
+
+
+def query_segtree(index, start, end, left, right):
+    # For an exception
+    if right < start or end < left:
+        return -1
+
+    if left <= start and end <= right:
+        return tree[index]
 
     mid = (start+end)//2
-    left_min = initializeMins(index*2, start, mid)
-    right_min = initializeMins(index*2+1, mid+1, end)
+    l = query_segtree(index*2, start, mid, left, right)
+    r = query_segtree(index*2+1, mid+1, end, left, right)
 
-    mins[index] = min(left_min, right_min)
+    # Handle out of range exception
+    if l == -1 or r == -1:
+        return max(l, r)
+    else:
+        # Returns lower one
+        if nums[l] < nums[r]:
+            return l
+        else:
+            return r
 
-    return mins[index]
 
+def get_square_area(start, end):
+    if start == end:
+        return nums[start]
 
-def queryMins(index, range, start, end):
-    if end < range[0] or range[1] < start:
-        return float('inf')
+    # Get lowest height
+    index = query_segtree(1, 1, nums[0], start, end)
+    areas = [(end-start+1)*nums[index]]
 
-    if range[0] <= start and end <= range[1]:
-        return mins[index]
+    # Is in range?
+    if index-1 >= start:
+        areas.append(get_square_area(start, index-1))
+    if index+1 <= end:
+        areas.append(get_square_area(index+1, end))
 
-    mid = (start+end)//2
-    left_min = queryMins(index*2, range, start, mid)
-    right_min = queryMins(index*2+1, range, mid+1, end)
-
-    return min(left_min, right_min)
+    return max(areas)
 
 
 if __name__ == '__main__':
-    while True:
-        input_nums = list(map(int, input().split()))
-        if input_nums == [0]:
-            break
-        input_len = len(input_nums)
+    # Do while
+    nums = list(map(int, input().split()))
+    while nums[0] != 0:
+        # Initialize segment tree
+        tree = [0]*get_tree_length(nums[0])
+        initialize_segtree(1, 1, nums[0])
 
-        mins = [0]*(4*input_len)
-        initializeMins(1, 0, input_len-1)
+        # Solution
+        print(get_square_area(1, nums[0]))
 
-        max_sum = 0
-        for i in range(input_len):
-            for j in range(i, input_len):
-                max_sum = max(max_sum, queryMins(
-                    1, (i, j), 0, input_len-1)*(j-i+1))
-        print(max_sum)
+        # Get next input
+        nums = list(map(int, input().split()))
