@@ -1,82 +1,27 @@
 import sys
-import math
 input = sys.stdin.readline
-sys.setrecursionlimit(1000000)
 
 
-def get_tree_length(N):
-    if N & (N-1) == 0:
-        return 2*N
-    else:
-        return pow(2, math.ceil(math.log(N, 2)) + 1)
+def solution(nums):
+    res = 0
 
+    length = nums[0]
+    stack = [0]  # 인덱스를 저장
+    nums[0] = 0  # 반복문 초기에 nums[stack[0]], 즉 nums[0]과 값을 비교하는데, 이에 대한 처리임
+    nums.append(0)  # 마지막 인덱스에서의 연산을 위함
 
-def initialize_segtree(index, start, end):
-    if start == end:
-        tree[index] = start
-        return
+    for i in range(1, length+2):
+        while nums[stack[-1]] > nums[i]:
+            index = stack.pop()
+            res = max(res, (i - (stack[-1] + 1))*nums[index])
 
-    mid = (start + end)//2
-    initialize_segtree(index*2, start, mid)
-    initialize_segtree(index*2+1, mid+1, end)
+        stack.append(i)
 
-    # Returns lower one
-    if nums[tree[index*2]] < nums[tree[index*2+1]]:
-        tree[index] = tree[index*2]
-    else:
-        tree[index] = tree[index*2+1]
-
-
-def query_segtree(index, start, end, left, right):
-    # For an exception
-    if right < start or end < left:
-        return -1
-
-    if left <= start and end <= right:
-        return tree[index]
-
-    mid = (start+end)//2
-    l = query_segtree(index*2, start, mid, left, right)
-    r = query_segtree(index*2+1, mid+1, end, left, right)
-
-    # Handle out of range exception
-    if l == -1 or r == -1:
-        return max(l, r)
-    else:
-        # Returns lower one
-        if nums[l] < nums[r]:
-            return l
-        else:
-            return r
-
-
-def get_square_area(start, end):
-    if start == end:
-        return nums[start]
-
-    # Get lowest height
-    index = query_segtree(1, 1, nums[0], start, end)
-    areas = [(end-start+1)*nums[index]]
-
-    # Is in range?
-    if index-1 >= start:
-        areas.append(get_square_area(start, index-1))
-    if index+1 <= end:
-        areas.append(get_square_area(index+1, end))
-
-    return max(areas)
+    return res
 
 
 if __name__ == '__main__':
-    # Do while
     nums = list(map(int, input().split()))
     while nums[0] != 0:
-        # Initialize segment tree
-        tree = [0]*get_tree_length(nums[0])
-        initialize_segtree(1, 1, nums[0])
-
-        # Solution
-        print(get_square_area(1, nums[0]))
-
-        # Get next input
+        print(solution(nums))
         nums = list(map(int, input().split()))
