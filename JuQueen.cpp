@@ -75,6 +75,7 @@ int getToAdd(pair<int, int> minMax, int toAdd) {
 
 int main()
 {
+	ios::sync_with_stdio(0); cin.tie(0); cout.tie(0);
 	int i;
 
 	cin >> C >> N >> O;
