@@ -1,10 +1,10 @@
 import java.util.*
 
-var h = 0
-var n = 0
-val dx = listOf(1, 0)
-val dy = listOf(0, 1)
-var dp: Array<Array<Long>>? = null
+private var h = 0
+private var n = 0
+private val dx = listOf(1, 0)
+private val dy = listOf(0, 1)
+private var dp: Array<Array<Long>>? = null
 
 fun f(x: Int, y: Int): Long {
     if (x > n || y > n) return 0
