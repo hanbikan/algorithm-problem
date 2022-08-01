@@ -40,14 +40,14 @@ fun main() = with(Scanner(System.`in`)) {
     print(travel(s!!, 1000001))
 }
 
-fun find(x: Int): Int {
+private fun find(x: Int): Int {
     if (parents!![x] == x) return x
 
     parents!![x] = find(parents!![x])
     return parents!![x]
 }
 
-fun union(x: Int, y: Int) {
+private fun union(x: Int, y: Int) {
     val px = find(x)
     val py = find(y)
 
@@ -55,7 +55,7 @@ fun union(x: Int, y: Int) {
     else parents!![py] = px
 }
 
-fun travel(node: Int, count: Int): Int {
+private fun travel(node: Int, count: Int): Int {
     if (node == e) return count
 
     var res = 0

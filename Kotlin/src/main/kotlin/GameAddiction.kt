@@ -6,7 +6,7 @@ private val dx = listOf(1, 0)
 private val dy = listOf(0, 1)
 private var dp: Array<Array<Long>>? = null
 
-fun f(x: Int, y: Int): Long {
+private fun f(x: Int, y: Int): Long {
     if (x > n || y > n) return 0
     if (x == n && y == n) return 1
 
