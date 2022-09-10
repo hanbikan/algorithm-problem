@@ -1,7 +1,5 @@
-from collections import deque
-
-
-a = deque()
-a.append(2)
-
-print(sum(a))
+print(
+    max(
+        i for i in range(10)
+    )
+)
