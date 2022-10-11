@@ -1,10 +1,13 @@
+from math import sqrt
 
-def f(z, o, K, X):
-    if (z//K)*(X - K) < o: return -1
-    else:
-        # 1 -1 / 1 3
-        return max(0, (z + o - 1) // X + 1)
 
-for i in range(1, 10):
-    for j in range(1, 6):
-        print(i, j, f(i, j, 3, 5))
+for t in range(1, 100):
+    res = []
+    i = 1
+    while 2*i+1 <= t:
+        if sqrt(t + i**2) % 1 == 0:
+            res.append(int(sqrt(t + i**2)))
+        i += 1
+
+    if len(res) == 0: res.append(-1)
+    print(t, res)
