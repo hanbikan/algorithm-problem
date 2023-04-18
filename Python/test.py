@@ -3,6 +3,11 @@ from collections import defaultdict, deque
 import sys
 input = sys.stdin.readline
 
-a = list("asd")
-a[2] = 'c'
-print(a)
+lst = []
+while True:
+    line = str(input().rstrip())
+    if (line == "E"): break
+    lst.append(line)
+
+lst.sort()
+for item in lst: print(item)
