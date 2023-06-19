@@ -1,127 +1,136 @@
-def main():
-    # a 4 x 4 cell
-    #_4x4_Cells = ["CSSS","SSCC","CCCC","CCCC"]
-    #_4x4_Cells = ["CWGC","SSWG","CWCW","CCSS"]
-    _4x4_Cells = ["CGGG","GGCC","CCCC","CCCC"]
+import sys
+import random
+input = sys.stdin.readline
+
+def buy(index, seq, count = 1):
+    global cost
+
+    for i in range(seq):
+        nums[index + i] -= count
     
-    Links = [
-        "1110000000000000", # button 0
-        "0001000101010000", # button 1
-        "0000100000100011", # button 2
-        "1000111100000000", # button 3
-        "0000001110101000", # button 4
-        "1010000000000011", # button 5
-        "0001000000000011", # button 6
-        "0000110100000011", # button 7
-        "0111110000000000", # button 8
-        "0001110000000100", # button 9
-    ]
+    to_spend = costs[seq - 1]
+    if seq == 3 and costs[0] * 3 < costs[2]:
+        to_spend = costs[0] * 3
+    elif seq == 3 and costs[1] + costs[0] < costs[2]:
+        to_spend = costs[1] + costs[0]
+    elif seq == 2 and costs[0] * 2 < costs[1]:
+        to_spend = costs[0] * 2
+    cost += to_spend * count
+
+def solution():
+    global cost
+
+    #  @       @@@
+    # @@@@ vs @@
+    flag_23 = costs[2] + costs[0] * 2 > costs[1] + costs[2]
+
+    # @@@ @ vs @@ @@
+    flag_22 = costs[2] + costs[0] > costs[1] * 2
+
+    cost = 0
+    i = 0
+    while i < N:
+        if nums[i] == 0:
+            i += 1
+        else:
+            min2 = min(nums[i:i + 2]) if i + 1 < N else False
+            min3 = min(min2, nums[i + 2]) if i + 2 < N else False
+            min4 = min(min3, nums[i + 3]) if i + 3 < N else False
+
+            if flag_23 and i + 3 < N and nums[i + 1] > nums[i + 2] and nums[i + 3] >= 1:
+                minn = min(nums[i], nums[i + 1], nums[i + 1] - nums[i + 2])
+                buy(i, 2, 1 if minn <= 2 else minn - 2)
+            elif flag_22 and i + 3 < N and min4 >= 1:
+                buy(i, 2, 1 if min4 <= 2 else min4 - 2)
+            
+            elif i + 2 < N and min3 >= 1:
+                buy(i, 3, 1 if min3 <= 2 else min3 - 2)
+            elif i + 1 < N and min2 >= 1:
+                buy(i, 2, 1 if min2 <= 2 else min2 - 2)
+            else:
+                buy(i, 1, 1 if nums[i] <= 2 else nums[i] - 2)
+        
+    return cost
+
+def dfs(index, nums, cost):
+    if index >= N:
+        return cost
+    if nums[index] == 0:
+        return dfs(index + 1, nums, cost)
     
-    pyslot(_4x4_Cells, Links)
-
-
-def convert_4x4_cells(_4x4_Cells):
-    new_cells = []
-    for row in _4x4_Cells:
-        new_row = []
-        for cell in row:
-            cell_index = convert_cell_to_cell_index(cell)
-            new_row.append(cell_index)
-        new_cells.append(new_row)
+    result = float('inf')
+    if index + 2 < N and min(nums[index], nums[index + 1], nums[index + 2] >= 1):
+        nums[index] -= 1
+        nums[index + 1] -= 1
+        nums[index + 2] -= 1
+        result = min(result, dfs(index, nums, cost + costs[2]))
+        nums[index] += 1
+        nums[index + 1] += 1
+        nums[index + 2] += 1
     
-    return new_cells
-
-# C, G, S, W -> 0, 1, 2, 3
-def convert_cell_to_cell_index(cell):
-    if cell == 'C': return 0
-    elif cell == 'G': return 1
-    elif cell == 'S': return 2
-    else: return 3
-
-def create_buttons_to_positions(Links):
-    buttons_to_positions = []
-    for link in Links:
-        positions = get_positions_from_link(link)
-        buttons_to_positions.append(positions)
+    if index + 1 < N and min(nums[index], nums[index + 1] >= 1):
+        nums[index] -= 1
+        nums[index + 1] -= 1
+        result = min(result, dfs(index, nums, cost + costs[1]))
+        nums[index] += 1
+        nums[index + 1] += 1
     
-    return buttons_to_positions
-
-# "1110000000000000" -> [[0,0], [0,1], [0,2]]
-def get_positions_from_link(link):
-    result = []
-    for i in range(len(link)):
-        if link[i] == '1':
-            result.append([i // 4, i % 4])
+    if nums[index] >= 1:
+        nums[index] -= 1
+        result = min(result, dfs(index, nums, cost + costs[0]))
+        nums[index] += 1
     
     return result
 
+for _ in range(10000):
+    N = random.randrange(2, 1000000)
+    B = random.randrange(1, 1000000)
+    C = random.randrange(1, 1000000)
+    costs = [B, B + C, B + C * 2]
+    nums = []
+    for i in range(N):
+        nums.append(random.randrange(0, 1000000))
+    print(N, B, C, "->", costs)
+    print(' '.join(map(str, nums)))
+    
+    #original, sol = dfs(0, nums, 0), solution()
+    print(solution())
+    #if (original != sol):
+        #print(original, sol)
+        #print("FAIL")
+        #break
 
-def press_button(cells, button_positions):
-    for x, y in button_positions:
-        cells[x][y] = (cells[x][y] + 1) % 4
+'''
+6 [4, 4, 3, 1, 2, 2]
+6 [4, 4, 3, 1, 1, 4]
 
-def cancel_press_button(cells, button_positions):
-    for x, y in button_positions:
-        cells[x][y] = (cells[x][y] + 3) % 4
+4
+2 3 2 1
 
-def is_big_jackpot(cells):
-    for row in cells:
-        for cell in row:
-            if cell != 0: return False
-    return True
-
-def deepcopy(row):
-    return [row[i] for i in range(len(row))]
+조건: 1 > 2
 
 
-def dfs(index):
-    global min_combination_length, pressed_at_min_combination_length, cells, buttons_to_positions, pressed
+ @ @
+ @@@
+@@@@ 5 7 7 3
 
-    for i in range(index, len(buttons_to_positions)):
-        if pressed[i] >= 3: continue
-        
-        # Back tracking
-        press_button(cells, buttons_to_positions[i])
-        pressed[i] += 1
+ @
+@@@@
 
-        # Check big jackpot and update values
-        if is_big_jackpot(cells):
-            if sum(pressed) < min_combination_length:
-                min_combination_length = sum(pressed)
-                pressed_at_min_combination_length = deepcopy(pressed)
-            return
-        
-        dfs(i)
-        cancel_press_button(cells, buttons_to_positions[i])
-        pressed[i] -= 1
-        
+ @
+ @@@
+@@@@
 
-def pyslot(_4x4_Cells, Links):
-    global min_combination_length, pressed_at_min_combination_length, cells, buttons_to_positions, pressed
+ @
+ @
+@@@@
 
-    # Preprocessing: Convert _4x4_Cells and Links to cells and buttons_to_positions
-    cells = convert_4x4_cells(_4x4_Cells)
-    if is_big_jackpot(cells):
-        print("Big Jackpot!!: []")
-        return
-    buttons_to_positions = create_buttons_to_positions(Links)
+   @
+ @ @
+@@@@
 
-    # Solution
-    min_combination_length = float('inf')
-    # Ex) [0, 0, 2, 0, 1, 0, 0, 0, 0, 0] means that button 2's pressed 2 times and button 4's pressed one time
-    pressed_at_min_combination_length = None
-    pressed = [0] * 10
-    dfs(0)
-
-    if pressed_at_min_combination_length == None:
-        print("Opps")
-    else:
-        # Convert pressed_at_min_combination_length
-        # Ex) [1, 1, 0, 1, 0, 2, 3, 1, 0, 0] → [0, 1, 3, 5, 5, 6, 6, 6, 7]
-        result = []
-        for i in range(len(pressed_at_min_combination_length)):
-            for _ in range(pressed_at_min_combination_length[i]):
-                result.append(i)
-        print("Big Jackpot!!:", result)
-
-main()
+ @ @
+ @ @
+@@@@
+5 7 3 3 3
+'''
