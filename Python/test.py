@@ -82,55 +82,19 @@ def dfs(index, nums, cost):
     
     return result
 
-for _ in range(10000):
-    N = random.randrange(2, 1000000)
-    B = random.randrange(1, 1000000)
-    C = random.randrange(1, 1000000)
+for t in range(10000):
+    N = random.randrange(1, 10)
+    B = random.randrange(1, 10)
+    C = random.randrange(1, 10)
     costs = [B, B + C, B + C * 2]
     nums = []
     for i in range(N):
-        nums.append(random.randrange(0, 1000000))
-    print(N, B, C, "->", costs)
+        nums.append(random.randrange(0, 5))
+    print("========case {0}========".format(t))
+    print("N = {0}, B = {1}, C = {2}, costs = {3}".format(N, B, C, costs))
     print(' '.join(map(str, nums)))
     
-    #original, sol = dfs(0, nums, 0), solution()
-    print(solution())
-    #if (original != sol):
-        #print(original, sol)
-        #print("FAIL")
-        #break
-
-'''
-6 [4, 4, 3, 1, 2, 2]
-6 [4, 4, 3, 1, 1, 4]
-
-4
-2 3 2 1
-
-조건: 1 > 2
-
-
- @ @
- @@@
-@@@@ 5 7 7 3
-
- @
-@@@@
-
- @
- @@@
-@@@@
-
- @
- @
-@@@@
-
-   @
- @ @
-@@@@
-
- @ @
- @ @
-@@@@
-5 7 3 3 3
-'''
+    answer, my_solution = dfs(0, nums, 0), solution()
+    if (answer != my_solution):
+        print("Failed: answer = {0}, my solution = {1}".format(answer, my_solution))
+        break
