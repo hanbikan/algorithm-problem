@@ -6,4 +6,4 @@ input = sys.stdin.readline
 # N = random.randrange(2, 4)
 
 a = [1, 4, 6]
-print(bisect_right(a, 10) - 1)
+print(a[::-1])
