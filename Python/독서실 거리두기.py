@@ -5,35 +5,35 @@ input = sys.stdin.readline
 def convert_to_int(hour, minute):
     return (hour - 9) * 60 + minute
 
-def find_sit(sits):
-    if len(sits) == 0:
+def find_seat(seats):
+    if len(seats) == 0:
         return 0
 
-    sorted_sits = sorted(sits)
-    max_dist, max_sit = sorted_sits[0], 0
-    for i in range(1, len(sorted_sits)):
-        cur_sit = (sorted_sits[i - 1] + sorted_sits[i]) // 2
-        cur_dist = min(cur_sit - sorted_sits[i - 1], sorted_sits[i] - cur_sit)
+    sorted_seats = sorted(seats)
+    max_dist, max_seat = sorted_seats[0], 0
+    for i in range(1, len(sorted_seats)):
+        cur_seat = (sorted_seats[i - 1] + sorted_seats[i]) // 2
+        cur_dist = min(cur_seat - sorted_seats[i - 1], sorted_seats[i] - cur_seat)
         if cur_dist > max_dist:
             max_dist = cur_dist
-            max_sit = cur_sit
+            max_seat = cur_seat
 
-    end_dist = N - 1 - sorted_sits[-1]
+    end_dist = N - 1 - sorted_seats[-1]
     if end_dist > max_dist:
         max_dist = end_dist
-        max_sit = N - 1
+        max_seat = N - 1
 
-    return max_sit
+    return max_seat
 
-def print_sits():
+def print_seats():
     for hour in range(9, 21):
         print("HOUR :", hour)
         for minute in range(0, 60):
-            print(minute, ":", sits_by_int[convert_to_int(hour, minute)])
+            print(minute, ":", seats_by_int[convert_to_int(hour, minute)])
 
 N, T, P = map(int, input().split())
 
-sits_by_int = [set() for _ in range(convert_to_int(21, 0) + 1)]
+seats_by_int = [set() for _ in range(convert_to_int(21, 0) + 1)]
 ints = []
 for _ in range(T):
     start, end = map(str, input().split())
@@ -45,15 +45,15 @@ for _ in range(T):
 ints.sort(key = lambda x: x[1])
 ints.sort(key = lambda x: x[0])
 for s, e in ints:
-    start_sits = sits_by_int[s]
-    sit = find_sit(start_sits)
+    start_seats = seats_by_int[s]
+    seat = find_seat(start_seats)
 
     for n in range(s, e):
-        sits_by_int[n].add(sit)
-print_sits()
+        seats_by_int[n].add(seat)
+
 result = 0
-for sits in sits_by_int:
-    if P - 1 not in sits:
+for seats in seats_by_int:
+    if P - 1 not in seats:
         result += 1
 result -= 1
 print(result)
