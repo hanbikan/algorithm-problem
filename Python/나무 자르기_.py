@@ -23,7 +23,7 @@ dp = [0] * n
 stack = collections.deque()
 for i in range(1, n):
     cur_f = LinearFunction(b[i - 1], dp[i - 1], 0)
-    # stack에서 불필요한 함수 제거(cur_f가 높은(?) 함수들 제거)
+    # stack에서 불필요한 함수 제거(cur_f보다 높은(?) 함수들 제거)
     while stack:
         top_f = stack[-1]
         intersection_x = cur_f.get_intersection_x(top_f)

@@ -16,7 +16,7 @@ cur = 0
 
 # dp[i] = max(dp[j] + f(p[i] - p[j])) (0 <= j < i) = max(-2ap[j]p[i] + ap[j]^2 - bp[j] + dp[j]) + ap[i]^2 + bp[i] + c
 # f(x) = -2ap[j]x + ap[j]^2 - bp[j] + dp[j] (x = p[i])
-# convex hull: -2ap[j] 기울기 단조감소
+# convex hull: -2ap[j] 기울기 단조증가 + 최대값 구해야 함
 dp = 0
 stack = collections.deque([[0.0, 0.0, 0.0]])
 p = 0
