@@ -1,94 +1,70 @@
 import sys
 input = sys.stdin.readline
 
-def get_adjacent_indexes(index):
-    left = index - 1 if (index - 1) % N != 0 else index + (N - 1)
-    right = index + 1 if index % N != 0 else index - (N - 1)
-    front = (index - 1 + N) % (2 * N) + 1
-    sett = set([left, right, front])
-    if index in sett:
-        sett.remove(index)
-    return list(sett)
+def calculate_y(y):
+    return (y + N) % N
 
-def combine(index1, index2):
-    enemies[index1] = float('inf')
-    enemies[index2] = float('inf')
-    adjs = get_adjacent_indexes(index1) + get_adjacent_indexes(index2)
-    for adj in adjs:
-        update_possible_counts(adj)
-
-def update_possible_counts(index):
-    possible_counts[index] = 0
-    adjs = get_adjacent_indexes(index)
-    for adj in adjs:
-        if enemies[index] + enemies[adj] <= W:
-            possible_counts[index] += 1
-
-def get_possible_adjacent_indexes(index):
-    res = []
-    adjs = get_adjacent_indexes(index)
-    for adj in adjs:
-        if enemies[index] + enemies[adj] <= W:
-            res.append(adj)
-    return res
-
-def f():
-    global result
-    
-    entries = []
-    for i in range(1, 2 * N + 1):
-        if possible_counts[i] == 1:
-            entries.append(i)
-
-    while entries:
-        i = entries.pop()
-        if enemies[i] == float('inf'):
-            continue
-
-        if possible_counts[i] == 1:
-            possible_adj = get_possible_adjacent_indexes(i)[0]
-            combine(i, possible_adj)
-            result += 1
-
-            adjs = get_adjacent_indexes(possible_adj)
-            for adj in adjs:
-                if possible_counts[adj] == 1:
-                    entries.append(adj)
+def can_cover_with_next_y(x, y):
+    return enemies[x][y] + enemies[x][calculate_y(y + 1)] <= W
 
 T = int(input())
 for _ in range(T):
     N, W = map(int,input().split())
     enemies = [list(map(int,input().split())) for _ in range(2)]
-    enemies = [None] + enemies[0] + enemies[1]
-    
-    possible_counts = [0] * (2 * N + 1)
-    for i in range(1, 2 * N + 1):
-        update_possible_counts(i)
-    
-    result = 0
 
-    f()
-    
-    for i in range(1, 2 * N + 1):
-        if enemies[i] == float('inf'):
+    result = float('inf')
+    for k in range(4):
+        c0 = True
+        c1, c2 = can_cover_with_next_y(0, -1), can_cover_with_next_y(1, -1)
+        c3 = c1 and c2
+
+        if k == 0 and c0:
+            dp = [[float('inf')] * 4 for _ in range(N + 1)]
+            dp[0][0] = 0
+        elif k == 1 and c1:
+            dp = [[float('inf')] * 4 for _ in range(N + 1)]
+            dp[0][1] = 0
+        elif k == 2 and c2:
+            dp = [[float('inf')] * 4 for _ in range(N + 1)]
+            dp[0][2] = 0
+        elif k == 3 and c3:
+            dp = [[float('inf')] * 4 for _ in range(N + 1)]
+            dp[0][3] = 0
+        else:
             continue
 
-        if possible_counts[i] == 1:
-            f()
-        elif possible_counts[i] >= 2:
-            # 가장 인원이 많은 곳 찾기
-            possible_adjs = get_possible_adjacent_indexes(i)
-            max_adj = None
-            max_enemy = 0
-            for adj in possible_adjs:
-                if enemies[adj] > max_enemy:
-                    max_adj = adj
-                    max_enemy = enemies[adj]
-            # 가장 인원이 많은 곳과 결합
-            combine(i, max_adj)
-            result += 1
-        else:
-            enemies[i] = float('inf')
-            result += 1
+        for i in range(1, N + 1):
+            c0 = True
+            c0_vertical = enemies[0][i - 1] + enemies[1][i - 1] <= W
+            c1, c2 = can_cover_with_next_y(0, i - 1), can_cover_with_next_y(1, i - 1)
+            c3 = c1 and c2
+
+            dp[i][0] = min(
+                dp[i - 1][0] + 2,
+                dp[i - 1][1] + 1,
+                dp[i - 1][2] + 1,
+                dp[i - 1][3]
+            )
+            if c0_vertical:
+                dp[i][0] = min(dp[i][0], dp[i - 1][0] + 1)
+            if c1:
+                dp[i][1] = min(dp[i - 1][0] + 2, dp[i - 1][2] + 1)
+            if c2:
+                dp[i][2] = min(dp[i - 1][0] + 2, dp[i - 1][1] + 1)
+            if c3:
+                dp[i][3] = dp[i - 1][0] + 2
+        result = min(result, dp[-1][k])
 
     print(result)
+
+'''
+1
+8 100
+70 60 55 43 57 60 44 50
+58 40 47 90 45 52 80 40
+
+1
+4 100
+50 100 100 50
+100 100 100 100
+'''
