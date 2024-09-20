@@ -2,7 +2,7 @@ import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class Main {
+public class 전깃줄 {
 	private static int bisectLeft(ArrayList<Integer> nums, int value) {
 		int left = 0;
 		int right = nums.size()-1;
