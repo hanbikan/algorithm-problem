@@ -1,2 +1,5 @@
-/Python/meta
-.*
+Python/meta/*
+Kotlin/out/
+**/out/*
+**/.idea/*
+*.iml
